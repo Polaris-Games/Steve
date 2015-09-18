@@ -1,11 +1,11 @@
-package com.syllabus.engine;
+package com.polaris.engine;
 
-import static com.syllabus.engine.Render.getMouseX;
-import static com.syllabus.engine.Render.getMouseY;
-import static com.syllabus.engine.Render.gl2d;
-import static com.syllabus.engine.Render.gl3d;
-import static com.syllabus.engine.Render.glClearBuffers;
-import static com.syllabus.engine.Render.glDefaults;
+import static com.polaris.engine.Render.getMouseX;
+import static com.polaris.engine.Render.getMouseY;
+import static com.polaris.engine.Render.gl2d;
+import static com.polaris.engine.Render.gl3d;
+import static com.polaris.engine.Render.glClearBuffers;
+import static com.polaris.engine.Render.glDefaults;
 
 import java.awt.Canvas;
 import java.awt.image.BufferedImage;

@@ -1,7 +1,7 @@
-package com.syllabus.engine;
+package com.polaris.engine;
 
-import static com.syllabus.engine.Render.getMouseX;
-import static com.syllabus.engine.Render.getMouseY;
+import static com.polaris.engine.Render.getMouseX;
+import static com.polaris.engine.Render.getMouseY;
 
 import java.util.ArrayList;
 import java.util.HashMap;

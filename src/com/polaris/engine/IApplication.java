@@ -1,4 +1,4 @@
-package com.syllabus.engine;
+package com.polaris.engine;
 
 import java.awt.Canvas;
 import java.awt.Window;

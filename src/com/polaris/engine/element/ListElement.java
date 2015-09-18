@@ -1,4 +1,4 @@
-package com.syllabus.engine.element;
+package com.polaris.engine.element;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.syllabus.engine;
+package com.polaris.engine;
 
 public interface IProgressMonitor 
 {

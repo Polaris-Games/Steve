@@ -1,4 +1,4 @@
-package com.syllabus.engine;
+package com.polaris.engine;
 
 import static org.lwjgl.opengl.GL11.GL_ALPHA_TEST;
 import static org.lwjgl.opengl.GL11.GL_BACK;

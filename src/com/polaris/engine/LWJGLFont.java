@@ -1,6 +1,6 @@
-package com.syllabus.engine;
+package com.polaris.engine;
 
-import static com.syllabus.engine.Render.*;
+import static com.polaris.engine.Render.*;
 import static org.lwjgl.opengl.GL11.glEnd;
 
 import java.awt.image.BufferedImage;

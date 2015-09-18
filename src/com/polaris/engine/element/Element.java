@@ -1,6 +1,6 @@
-package com.syllabus.engine.element;
+package com.polaris.engine.element;
 
-import com.syllabus.engine.Gui;
+import com.polaris.engine.Gui;
 
 public abstract class Element 
 {

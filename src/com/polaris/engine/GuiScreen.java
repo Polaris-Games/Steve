@@ -1,7 +1,8 @@
-package com.syllabus.engine;
+package com.polaris.engine;
 
 import org.lwjgl.input.Keyboard;
-import static com.syllabus.engine.Application.*;
+
+import static com.polaris.engine.Application.*;
 
 public class GuiScreen extends Gui
 {

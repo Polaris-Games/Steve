@@ -1,4 +1,4 @@
-package com.syllabus.engine;
+package com.polaris.engine;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 
-import com.syllabus.engine.element.Element;
+import com.polaris.engine.element.Element;
 
 public abstract class Gui
 {

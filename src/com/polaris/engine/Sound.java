@@ -1,4 +1,4 @@
-package com.syllabus.engine;
+package com.polaris.engine;
 
 import paulscode.sound.SoundSystem;
 import paulscode.sound.SoundSystemConfig;

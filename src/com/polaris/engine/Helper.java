@@ -1,7 +1,7 @@
-package com.syllabus.engine;
+package com.polaris.engine;
 
-import static com.syllabus.engine.Render.getMouseX;
-import static com.syllabus.engine.Render.getMouseY;
+import static com.polaris.engine.Render.getMouseX;
+import static com.polaris.engine.Render.getMouseY;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
@@ -274,7 +274,7 @@ public class Helper
 		return getListLoc(number, size) == getListLoc(number1, size);
 	}
 
-	public static void restart() throws IOException
+	/*public static void restart() throws IOException
 	{
 		StringBuilder cmd = new StringBuilder();
 		cmd.append(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java ");
@@ -286,7 +286,7 @@ public class Helper
 		cmd.append(Main.class.getName()).append(" ");
 		Runtime.getRuntime().exec(cmd.toString());
 		System.exit(0);
-	}
+	}*/
 
 	public static boolean withinBounds(double x, double y, double x1, double y1, double w, double h)
 	{
