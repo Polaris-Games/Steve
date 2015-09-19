@@ -5,36 +5,34 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
-import java.awt.Window;
 
 import javax.swing.JFrame;
 
 import com.polaris.engine.Application;
-import com.polaris.engine.IApplication;
 
-public class SteveApplication implements IApplication
+public class SteveApplication extends Application
 {
 
 	@Override
 	public void init()
 	{
-		Application.setGui(new GuiMainMenu());
+		setGui(new GuiMainMenu(this));
 	}
 
 	@Override
-	public void render(Application app, double delta)
+	public void render(double mouseX, double mouseY, double delta)
 	{
 		
 	}
 
 	@Override
-	public void update(Application app)
+	public void update()
 	{
 		
 	}
 
 	@Override
-	public int getTickRate() 
+	public int getUpdateRate() 
 	{
 		return 30;
 	}
@@ -52,7 +50,7 @@ public class SteveApplication implements IApplication
 	}
 
 	@Override
-	public void applyWindow(Window window, Canvas canvas)
+	public void createWindow(JFrame window, Canvas canvas)
 	{
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 		window.setSize((int)(screen.width / 1.5), (int)(screen.height / 1.5));
@@ -64,8 +62,8 @@ public class SteveApplication implements IApplication
 		window.setVisible(true);
 		((JFrame)window).setMaximizedBounds(GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds());
 		
-		Application.setResizable(true);
-		Application.setVSync(true);
+		//setResizable(true);
+		//setVSync(true);
 	}
 
 }

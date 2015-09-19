@@ -1,5 +1,6 @@
 package com.polaris.engine;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,13 +9,21 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ObjModel 
+import javax.imageio.ImageIO;
+
+import org.lwjgl.opengl.GL11;
+
+import static com.polaris.engine.Render.*;
+import static org.lwjgl.opengl.GL11.*;
+
+public class ObjModel 
 {
 
 	protected short[][] faceArray;
 	protected float[][] vertexArray;
 	protected float[][] textureCoordArray;
 	protected boolean supportsQuads;
+	protected int textureId;
 
 	public ObjModel(String name)
 	{
@@ -28,6 +37,7 @@ public abstract class ObjModel
 		{
 			e.printStackTrace();
 		}
+		textureId = createTextureId("model_" + name, false);
 	}
 
 	public ObjModel(String url, String textureUrl) throws IOException
@@ -36,10 +46,43 @@ public abstract class ObjModel
 		BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 		loadPolygons(reader);
 		reader.close();
+		connection.disconnect();
+		connection = (HttpURLConnection) new URL(textureUrl).openConnection();
+		textureId = createTextureId(textureUrl, ImageIO.read(connection.getInputStream()), false);
+		connection.disconnect();
 	}
 
-	public abstract void render(double x, double y, double z, double rotationX, double rotationY, double rotationZ);
-	public abstract void destroy();
+	public void render(double x, double y, double z, double rotationX, double rotationY, double rotationZ)
+	{
+		glPushMatrix();
+		glBind(textureId);
+		glTranslated(x, y, z);
+		glRotated(rotationX, 1, 0, 0);
+		glRotated(rotationY, 0, 1, 0);
+		glRotated(rotationZ, 0, 0, 1);
+		if(supportsQuads)
+			glBegin();
+		else
+			glBegin(GL11.GL_TRIANGLES);
+		int i;
+		int j;
+		short[] face;
+		for(i = 0; i < faceArray.length; i++)
+		{
+			face = faceArray[i];
+			for(j = 0; j < face.length; j+=2)
+			{
+				vertexUV(vertexArray[face[j]][0], vertexArray[face[j]][1], vertexArray[face[j]][2], textureCoordArray[face[j + 1]][0], textureCoordArray[face[j + 1]][1]);
+			}
+		}
+		glEnd();
+		glPopMatrix();
+	}
+
+	public void destroy()
+	{
+		
+	}
 
 	private void loadPolygons(BufferedReader reader) throws IOException
 	{

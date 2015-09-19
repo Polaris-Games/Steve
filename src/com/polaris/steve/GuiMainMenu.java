@@ -1,13 +1,13 @@
 package com.polaris.steve;
 
-import com.polaris.engine.GuiScreen;
+import com.polaris.engine.Application;
+import com.polaris.engine.Gui;
 
-public class GuiMainMenu extends GuiScreen
+public class GuiMainMenu extends Gui
 {
 
-	public GuiMainMenu() 
+	public GuiMainMenu(Application app)
 	{
-		super(null);
+		super(app);
 	}
-
 }
