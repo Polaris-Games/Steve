@@ -7,6 +7,8 @@ import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
+import org.lwjgl.opengl.Display;
+
 public class WindowHelper 
 {
 	
@@ -17,7 +19,10 @@ public class WindowHelper
 		window.setBackground(Color.BLACK);
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
-		window.setMaximizedBounds(GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds());
+		window.setResizable(true);
+		//window.setMaximizedBounds(GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds());
+		Display.setResizable(true);
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	public static void setNoBorders()

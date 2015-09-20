@@ -26,7 +26,7 @@ import org.lwjgl.opengl.Display;
 public abstract class Application 
 {
 	private JFrame window;
-	private Gui gui;
+	private GUI gui;
 	private Thread renderThread;
 	private Thread logicThread;
 	private boolean isRunning = true;
@@ -104,6 +104,7 @@ public abstract class Application
 				glDefaults();
 
 				init();
+				startApplication();
 			}
 		};
 		renderThread.start();
@@ -280,7 +281,7 @@ public abstract class Application
 		return buffer;
 	}
 
-	public void setGui(Gui newGui)
+	public void setGui(GUI newGui)
 	{
 		if(newGui == null)
 		{

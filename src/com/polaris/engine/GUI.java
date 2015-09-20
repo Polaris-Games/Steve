@@ -8,7 +8,7 @@ import org.lwjgl.input.Keyboard;
 
 import com.polaris.engine.element.Element;
 
-public abstract class Gui
+public abstract class GUI
 {
 
 	private volatile List<Element> elementList = Collections.synchronizedList(new ArrayList<Element>());
@@ -16,14 +16,14 @@ public abstract class Gui
 	protected int ticksExisted = 0;
 	protected boolean shiftDown = false;
 	protected Application application;
-	protected Gui parent;
+	protected GUI parent;
 
-	public Gui(Application app)
+	public GUI(Application app)
 	{
 		application = app;
 		parent = null;
 	}
-	public Gui(Application app, Gui gui)
+	public GUI(Application app, GUI gui)
 	{
 		this(app);
 		parent = gui;
@@ -133,20 +133,20 @@ public abstract class Gui
 		}
 	}
 
-	public int keyPressed(int keyId) 
+	public int keyPressed(int keyID) 
 	{
 		if(currentElement != null)
 		{
-			return currentElement.keyPressed(keyId);
+			return currentElement.keyPressed(keyID);
 		}
-		if(keyId == Keyboard.KEY_LSHIFT || keyId == Keyboard.KEY_RSHIFT)
+		if(keyID == Keyboard.KEY_LSHIFT || keyID == Keyboard.KEY_RSHIFT)
 		{
 			shiftDown = true;
 			return -1;
 		}
-		if(keyId == -1)
+		if(keyID == -1)
 		{
-			if(keyId == Keyboard.KEY_ESCAPE)
+			if(keyID == Keyboard.KEY_ESCAPE)
 			{
 				if(shiftDown)
 				{
@@ -171,22 +171,22 @@ public abstract class Gui
 		return -1;
 	}
 
-	public int keyHeld(int keyId)
+	public int keyHeld(int keyID)
 	{
 		if(currentElement != null)
 		{
-			return currentElement.keyHeld(keyId);
+			return currentElement.keyHeld(keyID);
 		}
 		return -1;
 	}
 
-	public void keyRelease(int keyId)
+	public void keyRelease(int keyID)
 	{
 		if(currentElement != null)
 		{
-			currentElement.keyRelease(keyId);
+			currentElement.keyRelease(keyID);
 		}
-		if(keyId == Keyboard.KEY_LSHIFT || keyId == Keyboard.KEY_RSHIFT)
+		if(keyID == Keyboard.KEY_LSHIFT || keyID == Keyboard.KEY_RSHIFT)
 		{
 			shiftDown = false;
 		}
@@ -267,7 +267,7 @@ public abstract class Gui
 		return currentElement;
 	}
 	
-	protected Gui getParent()
+	protected GUI getParent()
 	{
 		return parent;
 	}

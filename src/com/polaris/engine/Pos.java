@@ -24,6 +24,16 @@ public class Pos
 		return posY;
 	}
 	
+	public void setX(double x)
+	{
+		posX = x;
+	}
+	
+	public void setY(double y)
+	{
+		posY = y;
+	}
+	
 	public static class Pos2DPhysics extends Pos
 	{	
 		private double velX = 0;

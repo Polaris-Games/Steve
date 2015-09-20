@@ -1,6 +1,6 @@
 package com.polaris.engine.element;
 
-import com.polaris.engine.Gui;
+import com.polaris.engine.GUI;
 import com.polaris.engine.Pos;
 
 public abstract class Element 
@@ -12,7 +12,7 @@ public abstract class Element
 	protected double elementHeight = 0;
 	protected int elementId = 0;
 	protected int ticksExisted = 0;
-	protected Gui gui;
+	protected GUI gui;
 	
 	public Element(double x, double y, double width, double height)
 	{
@@ -67,9 +67,9 @@ public abstract class Element
 	
 	public void postRender(double x, double y, double delta) {}
 	
-	public void setGui(Gui g) {gui = g;}
+	public void setGui(GUI g) {gui = g;}
 	
-	public Gui getGui() {return gui;}
+	public GUI getGui() {return gui;}
 	
 	public void setVisible(boolean r) {visible = r;}
 	
