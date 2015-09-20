@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 
 import com.polaris.engine.Application;
 import com.polaris.engine.IApplication;
+import com.polaris.engine.Render;
 
 public class SteveApplication implements IApplication
 {
