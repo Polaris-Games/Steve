@@ -52,7 +52,7 @@ public abstract class Gui
 			for(int i = 0; i < elementList.size(); i++)
 			{
 				Element e = elementList.get(i);
-				if(e.isRendered())
+				if(e.isVisible())
 					e.preRender(x, y, delta);
 			}
 		}
@@ -62,7 +62,7 @@ public abstract class Gui
 			for(int i = 0; i < elementList.size(); i++)
 			{
 				Element e = elementList.get(i);
-				if(e.isRendered())
+				if(e.isVisible())
 					e.render(x, y, delta);
 			}
 		}
@@ -72,7 +72,7 @@ public abstract class Gui
 			for(int i = 0; i < elementList.size(); i++)
 			{
 				Element e = elementList.get(i);
-				if(e.isRendered())
+				if(e.isVisible())
 					e.postRender(x, y, delta);
 			}
 		}
@@ -231,7 +231,7 @@ public abstract class Gui
 	{
 		for(int k = i; k < j; k++)
 		{
-			elementList.get(k).setRender(visible);
+			elementList.get(k).setVisible(visible);
 		}
 	}
 

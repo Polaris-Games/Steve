@@ -1,9 +1,9 @@
 package com.polaris.engine;
 
-import static com.polaris.engine.Render.createTextureId;
-import static com.polaris.engine.Render.drawImage;
-import static com.polaris.engine.Render.glBegin;
-import static com.polaris.engine.Render.glBind;
+import static com.polaris.engine.Renderer.createTextureId;
+import static com.polaris.engine.Renderer.drawImage;
+import static com.polaris.engine.Renderer.glBegin;
+import static com.polaris.engine.Renderer.glBind;
 import static org.lwjgl.opengl.GL11.glEnd;
 
 import java.awt.image.BufferedImage;

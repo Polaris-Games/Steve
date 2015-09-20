@@ -1,7 +1,7 @@
 package com.polaris.engine;
 
-import static com.polaris.engine.Render.getMouseX;
-import static com.polaris.engine.Render.getMouseY;
+import static com.polaris.engine.Renderer.getMouseX;
+import static com.polaris.engine.Renderer.getMouseY;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;

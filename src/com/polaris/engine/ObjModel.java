@@ -13,7 +13,7 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 
-import static com.polaris.engine.Render.*;
+import static com.polaris.engine.Renderer.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class ObjModel 

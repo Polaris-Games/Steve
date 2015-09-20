@@ -22,14 +22,8 @@ public abstract class Button extends Element
 	@Override
 	public void update(double x, double y)
 	{
+		super.update(x, y);
 		highlighted = isInRegion(x, y);
-		ticksExisted++;
-	}
-
-	@Override
-	public boolean mouseClick(double x, double y, int mouseId)
-	{
-		return false;
 	}
 
 }

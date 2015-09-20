@@ -1,60 +1,6 @@
 package com.polaris.engine;
 
-import static org.lwjgl.opengl.GL11.GL_ALPHA_TEST;
-import static org.lwjgl.opengl.GL11.GL_BACK;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_DITHER;
-import static org.lwjgl.opengl.GL11.GL_GREATER;
-import static org.lwjgl.opengl.GL11.GL_LEQUAL;
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
-import static org.lwjgl.opengl.GL11.GL_LINEAR_MIPMAP_LINEAR;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_NICEST;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_PERSPECTIVE_CORRECTION_HINT;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.GL_REPEAT;
-import static org.lwjgl.opengl.GL11.GL_RGBA;
-import static org.lwjgl.opengl.GL11.GL_RGBA8;
-import static org.lwjgl.opengl.GL11.GL_SMOOTH;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
-import static org.lwjgl.opengl.GL11.GL_UNPACK_ALIGNMENT;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL11.glAlphaFunc;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glClearDepth;
-import static org.lwjgl.opengl.GL11.glClearStencil;
-import static org.lwjgl.opengl.GL11.glColor3f;
-import static org.lwjgl.opengl.GL11.glColor4d;
-import static org.lwjgl.opengl.GL11.glCullFace;
-import static org.lwjgl.opengl.GL11.glDepthFunc;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glGenTextures;
-import static org.lwjgl.opengl.GL11.glHint;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glPixelStorei;
-import static org.lwjgl.opengl.GL11.glShadeModel;
-import static org.lwjgl.opengl.GL11.glTexCoord2d;
-import static org.lwjgl.opengl.GL11.glTexParameteri;
-import static org.lwjgl.opengl.GL11.glTexSubImage2D;
-import static org.lwjgl.opengl.GL11.glVertex2d;
-import static org.lwjgl.opengl.GL11.glVertex3d;
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -72,7 +18,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
-public class Render
+public class Renderer
 {
 	private static Map<String, Integer> textureList = new HashMap<String, Integer>();
 
@@ -82,6 +28,8 @@ public class Render
 	protected static int height = 720;
 	protected static double widthProportional = 1;
 	protected static double heightProportional = 1;
+	protected static double mouseX = 0;
+	protected static double mouseY = 0;
 
 	public static int createTextureId(String filename, boolean mipmap)
 	{
@@ -167,7 +115,7 @@ public class Render
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		GLU.gluPerspective(90, (float) width / height, 0.1f, Float.MAX_VALUE);
+		GLU.gluPerspective(90, (float) width / height, 0.1f, 1000);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 	}
@@ -211,18 +159,7 @@ public class Render
 		}
 		return false;
 	}
-
-	public static boolean glClear(String texture)
-	{
-		if(textureList.containsKey(texture))
-		{
-			GL11.glDeleteTextures(textureList.get(texture));
-			textureList.remove(texture);
-			return true;
-		}
-		return false;
-	}
-
+	
 	/**
 	 * Binds the current OpenGl texture to be the [String:textureName] from the cached and if non existent then it will generate
 	 * the texture under the [BufferedImage:texture]
@@ -253,6 +190,32 @@ public class Render
 			return true;
 		}
 		return false;
+	}
+
+	public static boolean glClear(String texture)
+	{
+		if(textureList.containsKey(texture))
+		{
+			GL11.glDeleteTextures(textureList.get(texture));
+			textureList.remove(texture);
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean glClear(int textureId)
+	{
+		boolean found = false;
+		for(String textureName : textureList.keySet())
+		{
+			if(textureList.get(textureName) == textureId)
+			{
+				found = true;
+				textureList.remove(textureName);
+				break;
+			}
+		}
+		return found;
 	}
 
 	public static void glEnableText()
@@ -309,7 +272,7 @@ public class Render
 
 		glColor3f(1.0f, 1.0f, 1.0f);
 	}
-
+	
 	public static void vertexUV(double x, double y, double u, double v)
 	{
 		glTexCoord2d(u, v);
@@ -321,7 +284,31 @@ public class Render
 		glTexCoord2d(u, v);
 		glVertex3d(x, y, z);
 	}
-
+	
+	public static void colorVertex(double x, double y, double r, double g, double b, double a)
+	{
+		glColor4d(r, g, b, a);
+		glVertex2d(x, y);
+	}
+	
+	public static void colorVertex(double x, double y, double z, double r, double g, double b, double a)
+	{
+		glColor3d(r, g, b);
+		glVertex3d(x, y, z);
+	}
+	
+	public static void colorVertexUV(double x, double y, double u, double v, double r, double g, double b, double a)
+	{
+		glColor4d(r, g, b, a);
+		vertexUV(x, y, u, v);
+	}
+	
+	public static void colorVertexUV(double x, double y, double z, double u, double v, double r, double g, double b, double a)
+	{
+		glColor4d(r, g, b, a);
+		vertexUV(x, y, z, u, v);
+	}
+	
 	public static void drawRect(double x, double y, double x1, double y1, double thickness)
 	{
 		glVertex2d(x, y1);
@@ -385,14 +372,20 @@ public class Render
 		return heightProportional;
 	}
 	
+	public static void setMousePosition()
+	{
+		mouseX = Mouse.getX() * widthProportional;
+		mouseY = 720 - (Mouse.getY() * heightProportional);
+	}
+	
 	public static double getMouseX()
 	{
-		return Mouse.getX() * widthProportional;
+		return mouseX;
 	}
 	
 	public static double getMouseY()
 	{
-		return 720 - (Mouse.getY() * heightProportional);
+		return mouseY;
 	}
 
 }
