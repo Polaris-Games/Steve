@@ -1,11 +1,18 @@
 package com.polaris.engine;
 
+import static com.polaris.engine.Renderer.createTextureId;
+import static com.polaris.engine.Renderer.drawImage;
+import static com.polaris.engine.Renderer.glBegin;
+import static com.polaris.engine.Renderer.glBind;
+import static org.lwjgl.opengl.GL11.glEnd;
+
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,7 +23,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public abstract class Font
+public class Font
 {
 
 	public static final byte FONT_ALIGN_CENTER = 0b00000001;
@@ -29,6 +36,9 @@ public abstract class Font
 
 	private IntObject[] charArray = new IntObject[256];
 	private String fontName = "";
+	private int textureId = 0;
+	private int textureWidth = 0;
+	private int textureHeight = 0;
 
 	public Font() {}
 
@@ -226,19 +236,54 @@ public abstract class Font
 		return fontName;
 	}
 
-	protected abstract void startDrawing();
-	protected abstract void drawQuad(double x, double y, double x1, double y1, float u, float v, float u1, float v1);
-	protected abstract void draw();
-	protected abstract void loadTexture(InputStream textureStream);
-	protected abstract void bind();
-	public abstract void destroy();
-
-	protected abstract float getTextureWidth();
-	protected abstract float getTextureHeight();
-
-	public Font convertFont(Class<? extends Font> convertFont, String name) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException
+	protected void startDrawing()
 	{
-		return convertFont.getDeclaredConstructor(IntObject[].class, String.class).newInstance(this.charArray, name);
+		glBegin();
+	}
+
+	protected void drawQuad(double x, double y, double x1, double y1, float u, float v, float u1, float v1) 
+	{
+		drawImage(x, y, x1, y1, u, v, u1, v1);
+	}
+	
+	protected void draw()
+	{
+		glEnd();
+	}
+	
+	protected void loadTexture(InputStream textureStream)
+	{
+		try 
+		{
+			BufferedImage image = ImageIO.read(textureStream);
+			textureWidth = image.getWidth();
+			textureHeight = image.getHeight();
+			textureId = createTextureId(getTextureName(), image, false);
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+
+	protected void bind()
+	{
+		glBind(textureId);
+	}
+
+	protected float getTextureWidth()
+	{
+		return textureWidth;
+	}
+
+	protected float getTextureHeight()
+	{
+		return textureHeight;
+	}
+	
+	public void destroy()
+	{
+		
 	}
 
 	protected class IntObject

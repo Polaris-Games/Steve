@@ -7,12 +7,12 @@ import paulscode.sound.codecs.CodecJOrbis;
 import paulscode.sound.codecs.CodecWav;
 import paulscode.sound.libraries.LibraryLWJGLOpenAL;
 
-public class Sound
+public class SoundManager
 {
 
-	private static SoundSystem soundSystem;
+	private SoundSystem soundSystem;
 	
-	protected static void init()
+	public SoundManager()
 	{
 		try
 		{
@@ -29,32 +29,32 @@ public class Sound
 		}
 	}
 	
-	public static void streamAudio(String name, String location, float x, float y)
+	public void streamAudio(String name, String location, float x, float y)
 	{
 		soundSystem.newStreamingSource(true, name, location, false, x, y, 0, SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
 	}
 	
-	public static void streamAudio(String name, String location, boolean toLoop, float x, float y)
+	public void streamAudio(String name, String location, boolean toLoop, float x, float y)
 	{
 		soundSystem.newStreamingSource(true, name, location, toLoop, x, y, 0, SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
 	}
 	
-	public static void streamAudio(String name, String location, float x, float y, float z)
+	public void streamAudio(String name, String location, float x, float y, float z)
 	{
 		soundSystem.newStreamingSource(true, name, location, false, x, y, z, SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
 	}
 	
-	public static void streamAudio(String name, String location, boolean toLoop, float x, float y, float z)
+	public void streamAudio(String name, String location, boolean toLoop, float x, float y, float z)
 	{
 		soundSystem.newStreamingSource(true, name, location, toLoop, x, y, z, SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
 	}
 
-	public static void setMasterVolume(float f)
+	public void setMasterVolume(float f)
 	{
 		soundSystem.setMasterVolume(f);
 	}
 	
-	protected static void flush()
+	protected void flush()
 	{
 		//soundSystem.cleanup();
 	}

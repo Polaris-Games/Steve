@@ -1,101 +1,220 @@
 package com.polaris.engine;
 
-import static com.polaris.engine.Render.getMouseX;
-import static com.polaris.engine.Render.getMouseY;
-import static com.polaris.engine.Render.gl2d;
-import static com.polaris.engine.Render.gl3d;
-import static com.polaris.engine.Render.glClearBuffers;
-import static com.polaris.engine.Render.glDefaults;
+import static com.polaris.engine.Renderer.*;
 
 import java.awt.Canvas;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.Sys;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 
 
-public class Application 
+public abstract class Application 
 {
-	public static Application app;
-	private static JFrame window;
-	private IApplication appRunner;
+	private JFrame window;
 	private Gui gui;
-	private Timer timer;
-	private static boolean isCloseRequested = false;
-	private boolean is3d = false;
+	private Thread renderThread;
+	private Thread logicThread;
+	private boolean isRunning = true;
 	private boolean fullscreen = false;
+	private long lastTime = getTime();
+	private Map<Integer, Integer> keyboardPress = new HashMap<Integer, Integer>();
+	private List<Integer> mousePress = new ArrayList<Integer>();
+	private SoundManager soundManager;
 
-	public Application(IApplication runner)
+	public boolean isGrabbing = false;
+
+	public Application()
 	{
-		app = this;
-		appRunner = runner;
-		timer = new Timer(this, appRunner.getTickRate());
-		try
+		renderThread = new Thread()
 		{
-			Canvas canvas = new Canvas();
-			window = new JFrame(appRunner.getTitle());
+			public void run()
+			{
+				logicThread = new Thread()
+				{
 
-			appRunner.applyWindow(window, canvas);
+					public void run()
+					{
+						try
+						{
+							Keyboard.create();
+							Mouse.create();
+						}
+						catch(LWJGLException e)
+						{
+							e.printStackTrace();
+						}
+						loop();
+					}
 
-			Display.setParent(canvas);
-			Display.create();
-		}
-		catch(LWJGLException e)
-		{
-			e.printStackTrace();
-		}
+					private void loop()
+					{
+						long time = getTime();
+						while(isRunning)
+						{
+							if((getTime() - time) / 30f > 1f)
+							{
+								time = getTime();
+								logicLoop();
+							}
+							try
+							{
+								Thread.sleep(1L);
+							}
+							catch (InterruptedException e) 
+							{
+								return;
+							}
+						}
+						Mouse.destroy();
+						Keyboard.destroy();
+					}
+				};
+				try
+				{
+					Canvas canvas = new Canvas();
+					window = new JFrame(getTitle());
 
-		Sound.init();
+					createWindow(window, canvas);
 
-		updateScreen();
+					Display.setParent(canvas);
+					Display.create();
+				}
+				catch(LWJGLException e)
+				{
+					e.printStackTrace();
+				}
 
-		glDefaults();
+				soundManager = new SoundManager();
 
-		runner.init();
+				glDefaults();
+
+				init();
+			}
+		};
+		renderThread.start();
 	}
 
 	public void startApplication()
 	{
-		timer.start();
+		logicThread.start();
 
-		while(!Display.isCloseRequested() && !isCloseRequested)
+		while(!Display.isCloseRequested() && isRunning)
 		{
 			glClearBuffers();
+			setMousePosition();
 			renderLoop();
-			Display.update();
-			Display.sync(appRunner.getRefreshRate());
+			glUpdate(getRefreshRate());
 		}
 
 		shutdown();
 	}
 
-	protected void logicLoop()
+	private void logicLoop()
 	{
-		appRunner.update(this);
+		update();
 		if(gui != null)
 		{
-			Input.update(gui);
+			for(Integer i : keyboardPress.keySet())
+			{
+				int j = keyboardPress.get(i);
+				if(--j <= 0)
+				{
+					j = gui.keyHeld(i);
+					if(j <= 0)
+					{
+						keyboardPress.remove(i);
+					}
+					else
+					{
+						keyboardPress.put(i, j);
+					}
+				}
+				else
+				{
+					keyboardPress.put(i, j);
+				}
+			}
+			while(Keyboard.next())
+			{
+				boolean b = keyboardPress.containsKey(Keyboard.getEventKey());
+				boolean b1 = Keyboard.getEventKeyState();
+				if(!b && b1)
+				{
+					int i = gui.keyPressed(Keyboard.getEventKey());
+					if(i > 0)
+					{
+						keyboardPress.put(Integer.valueOf(Keyboard.getEventKey()), i);
+					}
+				}
+				else if(!b1)
+				{
+					gui.keyRelease(Keyboard.getEventKey());
+					if(b)
+					{
+						keyboardPress.remove(Integer.valueOf(Keyboard.getEventKey()));
+					}
+				}
+			}
+			for(int k = 0; k < mousePress.size(); k++)
+			{
+				Integer i = mousePress.get(k);
+				boolean b = gui.mouseClick(getMouseX(), getMouseY(), i);
+				if(!b)
+				{
+					mousePress.remove(i);
+				}
+			}
+			while(Mouse.next())
+			{
+				boolean b = mousePress.contains(Mouse.getEventButton());
+				boolean b1 = Mouse.getEventButtonState();
+				if(!b && b1)
+				{
+					if(gui.mouseClick(getMouseX(), getMouseY(), Mouse.getEventButton()))
+					{
+						isGrabbing = true;
+						mousePress.add(Integer.valueOf(Mouse.getEventButton()));
+					}
+				}
+				else if(b && !b1)
+				{
+					gui.mouseRelease(getMouseX(), getMouseY(), Mouse.getEventButton());
+					isGrabbing = false;
+					mousePress.remove(Integer.valueOf(Mouse.getEventButton()));
+				}
+			}
+			int i = Mouse.getDWheel();
+			gui.mouseScroll(getMouseX(), getMouseY(), i > 0 ? 1 : i < 0 ? -1 : 0);
 			gui.update(getMouseX(), getMouseY());
 		}
 	}
 
-	protected void renderLoop()
+	private void renderLoop()
 	{
-		double delta = timer.getDelta();
-		appRunner.render(this, delta);
+		long currentTime = getTime();
+		double delta = (currentTime - lastTime) / 30f;
+		lastTime = currentTime;
+		render(getMouseX(), getMouseY(), delta);
 		if(fullscreen != Display.isFullscreen())
 		{
 			try 
 			{
 				Display.setFullscreen(fullscreen);
-				updateScreen();
 			}
 			catch (LWJGLException e)
 			{
@@ -108,59 +227,24 @@ public class Application
 		}
 	}
 
-	public void updateScreen()
-	{
-		if(is3d)
-		{
-			gl3d();
-		}
-		else
-		{
-			gl2d();
-		}
-	}
+	protected abstract void update();
+	protected abstract void render(double mouseX, double mouseY, double delta);
+	protected abstract void init();
+	protected abstract int getRefreshRate();
+	protected abstract int getUpdateRate();
+	protected abstract String getTitle();
+	protected abstract void createWindow(JFrame window, Canvas canvas);
 
 	private void shutdown()
 	{
-		timer.isRunning = false;
-		Sound.flush();
-		while(timer.isAlive());
+		soundManager.flush();
+		while(logicThread.isAlive());
 		Display.destroy();
 		AL.destroy();
 		System.exit(1);
 	}
 
-	public static void setDimensions(int width, int height)
-	{
-		window.setSize(width, height);
-	}
-
-	protected static void removeBorders()
-	{
-		window.setUndecorated(true);
-	}
-
-	public static void setResizable(boolean resize)
-	{
-		window.setResizable(resize);
-	}
-
-	public static void setTitle(String title)
-	{
-		window.setTitle(title);
-	}
-
-	public static void setVSync(boolean vSync)
-	{
-		Display.setVSyncEnabled(vSync);
-	}
-
-	public static void setFullscreen(boolean screen)
-	{
-		app.fullscreen = screen;
-	}
-
-	public static void setIcons(String windowIcon, String barIcon)
+	public void setIcons(String windowIcon, String barIcon)
 	{
 		try 
 		{
@@ -175,7 +259,7 @@ public class Application
 		}
 	}
 
-	private static ByteBuffer loadIcon(String filename) throws IOException
+	private ByteBuffer loadIcon(String filename) throws IOException
 	{
 		BufferedImage image = ImageIO.read(Helper.getResourceStream(filename));
 		ByteBuffer buffer = BufferUtils.createByteBuffer(image.getWidth() * image.getHeight() * 4);
@@ -196,29 +280,39 @@ public class Application
 		return buffer;
 	}
 
-	public static void setGui(Gui newGui)
+	public void setGui(Gui newGui)
 	{
 		if(newGui == null)
 		{
 			close();
 			return;
 		}
-		if(app.gui != null)
+		if(gui != null)
 		{
-			app.gui.close();
+			gui.close();
 		}
 		newGui.init();
-		app.gui = newGui;
+		gui = newGui;
 	}
 
-	public static void close()
+	public void close()
 	{
-		isCloseRequested = true;
+		isRunning = false;
 	}
 
-	public static boolean getFullscreen()
+	public void setFullscreen(boolean f)
+	{
+		fullscreen = f;
+	}
+
+	public boolean isFullscreen()
 	{
 		return Display.isFullscreen();
+	}
+
+	private long getTime()
+	{
+		return (Sys.getTime() * 1000 / Sys.getTimerResolution());
 	}
 
 }

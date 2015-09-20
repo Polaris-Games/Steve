@@ -1,13 +1,13 @@
 package com.polaris.engine.element;
 
 import com.polaris.engine.Gui;
+import com.polaris.engine.Pos;
 
 public abstract class Element 
 {
 	
-	protected boolean render = true;
-	protected double posX = 0;
-	protected double posY = 0;
+	protected boolean visible = true;
+	protected Pos pos;
 	protected double elementWidth = 0;
 	protected double elementHeight = 0;
 	protected int elementId = 0;
@@ -16,22 +16,23 @@ public abstract class Element
 	
 	public Element(double x, double y, double width, double height)
 	{
-		posX = x;
-		posY = y;
+		pos = new Pos(x, y);
 		elementWidth = width;
 		elementHeight = height;
 	}
 	
-	public Element(boolean visible, double x, double y, double width, double height)
+	public Element(boolean vis, double x, double y, double width, double height)
 	{
-		render = visible;
-		posX = x;
-		posY = y;
+		visible = vis;
+		pos = new Pos(x, y);
 		elementWidth = width;
 		elementHeight = height;
 	}
 
-	public abstract void update(double x, double y);
+	public void update(double x, double y)
+	{
+		ticksExisted++;
+	}
 	
 	public abstract void render(double x, double y, double delta);
 	
@@ -53,7 +54,7 @@ public abstract class Element
 	
 	public boolean isInRegion(double x, double y)
 	{
-		return x >= posX && y >= posY && x <= (posX + elementWidth) && y <= (posY + elementHeight);
+		return x >= pos.getX() && y >= pos.getY() && x <= (pos.getX() + elementWidth) && y <= (pos.getY() + elementHeight);
 	}
 
 	public void setId(int id) {elementId = id;}
@@ -70,9 +71,9 @@ public abstract class Element
 	
 	public Gui getGui() {return gui;}
 	
-	public void setRender(boolean r) {render = r;}
+	public void setVisible(boolean r) {visible = r;}
 	
-	public boolean isRendered() {return render;}
+	public boolean isVisible() {return visible;}
 	
 	public void close() {}
 

@@ -15,7 +15,20 @@ public abstract class Gui
 	protected Element currentElement;
 	protected int ticksExisted = 0;
 	protected boolean shiftDown = false;
+	protected Application application;
+	protected Gui parent;
 
+	public Gui(Application app)
+	{
+		application = app;
+		parent = null;
+	}
+	public Gui(Application app, Gui gui)
+	{
+		this(app);
+		parent = gui;
+	}
+	
 	public void init() {}
 
 	public void update(double x, double y)
@@ -39,7 +52,7 @@ public abstract class Gui
 			for(int i = 0; i < elementList.size(); i++)
 			{
 				Element e = elementList.get(i);
-				if(e.isRendered())
+				if(e.isVisible())
 					e.preRender(x, y, delta);
 			}
 		}
@@ -49,7 +62,7 @@ public abstract class Gui
 			for(int i = 0; i < elementList.size(); i++)
 			{
 				Element e = elementList.get(i);
-				if(e.isRendered())
+				if(e.isVisible())
 					e.render(x, y, delta);
 			}
 		}
@@ -59,7 +72,7 @@ public abstract class Gui
 			for(int i = 0; i < elementList.size(); i++)
 			{
 				Element e = elementList.get(i);
-				if(e.isRendered())
+				if(e.isVisible())
 					e.postRender(x, y, delta);
 			}
 		}
@@ -131,6 +144,30 @@ public abstract class Gui
 			shiftDown = true;
 			return -1;
 		}
+		if(keyId == -1)
+		{
+			if(keyId == Keyboard.KEY_ESCAPE)
+			{
+				if(shiftDown)
+				{
+					application.setFullscreen(!application.isFullscreen());
+					shiftDown = false;
+				}
+				else
+				{
+					if(getParent() != null)
+					{
+						getParent().reinit();
+						application.setGui(getParent());
+						return 0;
+					}
+					else
+					{
+						application.close();
+					}
+				}
+			}
+		}
 		return -1;
 	}
 
@@ -194,7 +231,7 @@ public abstract class Gui
 	{
 		for(int k = i; k < j; k++)
 		{
-			elementList.get(k).setRender(visible);
+			elementList.get(k).setVisible(visible);
 		}
 	}
 
@@ -215,11 +252,24 @@ public abstract class Gui
 		elementList.clear();
 	}
 
-	public void close() {}
+	protected void reinit()
+	{
+		
+	}
+	
+	public void close() 
+	{
+		this.currentElement = null;
+	}
 
 	public Element getCurrentElement()
 	{
 		return currentElement;
+	}
+	
+	protected Gui getParent()
+	{
+		return parent;
 	}
 
 }

@@ -100,7 +100,7 @@ public abstract class ListElement<T> extends Element
 
 	public boolean isInRegion(double x, double y)
 	{
-		return super.isInRegion(x, y) || (clicked && x >= posX - shiftWidth && y >= posY - shiftHeight && x <= (posX - shiftWidth + extraWidth) && y <= (posY + elementHeight - shiftHeight + extraHeight));
+		return super.isInRegion(x, y) || (clicked && x >= pos.getX() - shiftWidth && y >= pos.getY() - shiftHeight && x <= (pos.getX() - shiftWidth + extraWidth) && y <= (pos.getY() + elementHeight - shiftHeight + extraHeight));
 	}
 	
 	public void mouseOutOfRegion(double x, double y, int mouseId)
