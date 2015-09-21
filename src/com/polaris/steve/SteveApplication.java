@@ -42,8 +42,9 @@ public class SteveApplication extends Application{
 	
 	public void createWindow()
 	{
-		window.setDefault();
 		window.setUndecorated(true);
+		window.setDefault();
+		
 		
 		//setResizable(true);
 		//setVSync(true);
