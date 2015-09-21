@@ -13,6 +13,7 @@ public abstract class Element
 	protected int elementId = 0;
 	protected int ticksExisted = 0;
 	protected GUI gui;
+	protected boolean highlighted = false;
 	
 	public Element(double x, double y, double width, double height)
 	{
@@ -32,6 +33,7 @@ public abstract class Element
 	public void update(double x, double y)
 	{
 		ticksExisted++;
+		highlighted = isInRegion(x, y);
 	}
 	
 	public abstract void render(double x, double y, double delta);

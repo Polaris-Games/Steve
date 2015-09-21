@@ -1,22 +1,26 @@
 package com.polaris.engine.element;
 
-public abstract class Slider extends Element
+public abstract class Slider<T> extends Element
 {
 	
-	protected Object minValue;
+	protected T minValue;
+	protected T maxValue;
+	protected T currentValue;
 	
-	protected Object maxValue;
-	
-	protected Object currentValue;
-	
-	public Slider(double x, double y, double width, double height, Object min, Object max, Object current)
+	public Slider(double x, double y, double width, double height, T min, T max, T current)
 	{
 		super(x, y, width, height);
+		minValue = min;
+		maxValue = max;
+		currentValue = current;
 	}
 	
-	public Slider(boolean visible, double x, double y, double width, double height, Object min, Object max, Object current)
+	public Slider(boolean visible, double x, double y, double width, double height, T min, T max, T current)
 	{
 		super(visible, x, y, width, height);
+		minValue = min;
+		maxValue = max;
+		currentValue = current;
 	}
 
 	@Override

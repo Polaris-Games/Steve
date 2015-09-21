@@ -1,6 +1,11 @@
 package com.polaris.engine;
 
-import static com.polaris.engine.Renderer.*;
+import static com.polaris.engine.Renderer.getMouseX;
+import static com.polaris.engine.Renderer.getMouseY;
+import static com.polaris.engine.Renderer.glClearBuffers;
+import static com.polaris.engine.Renderer.glDefaults;
+import static com.polaris.engine.Renderer.glUpdate;
+import static com.polaris.engine.Renderer.setMousePosition;
 
 import java.awt.Canvas;
 import java.awt.image.BufferedImage;
@@ -12,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -25,8 +29,8 @@ import org.lwjgl.opengl.Display;
 
 public abstract class Application 
 {
-	private JFrame window;
 	private GUI gui;
+	protected Window window;
 	private Thread renderThread;
 	private Thread logicThread;
 	private boolean isRunning = true;
@@ -66,7 +70,7 @@ public abstract class Application
 						long time = getTime();
 						while(isRunning)
 						{
-							if((getTime() - time) / 30f > 1f)
+							if((getTime() - time) / (float) getUpdateRate() > 1f)
 							{
 								time = getTime();
 								logicLoop();
@@ -87,9 +91,9 @@ public abstract class Application
 				try
 				{
 					Canvas canvas = new Canvas();
-					window = new JFrame(getTitle());
+					window = new Window(getTitle(), canvas);
 
-					createWindow(window, canvas);
+					createWindow();
 
 					Display.setParent(canvas);
 					Display.create();
@@ -139,16 +143,10 @@ public abstract class Application
 					if(j <= 0)
 					{
 						keyboardPress.remove(i);
-					}
-					else
-					{
-						keyboardPress.put(i, j);
+						continue;
 					}
 				}
-				else
-				{
-					keyboardPress.put(i, j);
-				}
+				keyboardPress.put(i, j);
 			}
 			while(Keyboard.next())
 			{
@@ -171,9 +169,8 @@ public abstract class Application
 					}
 				}
 			}
-			for(int k = 0; k < mousePress.size(); k++)
+			for(Integer i : mousePress)
 			{
-				Integer i = mousePress.get(k);
 				boolean b = gui.mouseClick(getMouseX(), getMouseY(), i);
 				if(!b)
 				{
@@ -199,8 +196,7 @@ public abstract class Application
 					mousePress.remove(Integer.valueOf(Mouse.getEventButton()));
 				}
 			}
-			int i = Mouse.getDWheel();
-			gui.mouseScroll(getMouseX(), getMouseY(), i > 0 ? 1 : i < 0 ? -1 : 0);
+			gui.mouseScroll(getMouseX(), getMouseY(), Mouse.getDWheel());
 			gui.update(getMouseX(), getMouseY());
 		}
 	}
@@ -234,7 +230,7 @@ public abstract class Application
 	protected abstract int getRefreshRate();
 	protected abstract int getUpdateRate();
 	protected abstract String getTitle();
-	protected abstract void createWindow(JFrame window, Canvas canvas);
+	protected abstract void createWindow();
 
 	private void shutdown()
 	{

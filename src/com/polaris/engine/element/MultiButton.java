@@ -1,5 +1,7 @@
 package com.polaris.engine.element;
 
+import com.polaris.engine.Helper;
+
 public abstract class MultiButton extends Button
 {
 
@@ -19,20 +21,9 @@ public abstract class MultiButton extends Button
 	}
 
 	@Override
-	public void update(double x, double y)
-	{
-		super.update(x, y);
-	}
-
-	@Override
 	public boolean mouseClick(double x, double y, int mouseId)
 	{
-		mode++;
-		if(mode >= modeNames.length)
-		{
-			mode = 0;
-		}
-		buttonText = modeNames[mode];
+		buttonText = modeNames[(mode = Helper.getListLoc(mode + 1, modeNames.length))];
 		return false;
 	}
 
@@ -43,12 +34,7 @@ public abstract class MultiButton extends Button
 
 	public void setMode(int m)
 	{
-		mode = m;
-		if(mode >= modeNames.length)
-		{
-			mode = 0;
-		}
-		buttonText = modeNames[mode];
+		buttonText = modeNames[(mode = Helper.getListLoc(m, modeNames.length))];
 	}
 	
 }
