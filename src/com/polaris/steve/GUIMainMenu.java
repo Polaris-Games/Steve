@@ -1,19 +1,21 @@
 package com.polaris.steve;
 
+import static com.polaris.engine.Renderer.gl3d;
+import static com.polaris.engine.Renderer.glBegin;
+import static org.lwjgl.opengl.GL11.glColor3f;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glRotated;
+import static org.lwjgl.opengl.GL11.glTranslated;
+import static org.lwjgl.opengl.GL11.glVertex3f;
+
 import org.lwjgl.input.Keyboard;
 
 import com.polaris.engine.Application;
 import com.polaris.engine.GUI;
-import com.polaris.engine.Pos;
-import com.polaris.engine.Renderer;
-import static com.polaris.engine.Renderer.*;
-import static org.lwjgl.opengl.GL11.*;
-
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
+import com.polaris.engine.Pos.Pos3D;
 public class GUIMainMenu extends GUI{
 
-	Pos ballPos = new Pos(1,-10.5);	// position of the ball
+	Pos3D ballPos = new Pos3D(5, 0, -10);	// position of the ball
 	double XAccel = 1;	// acceleration multiplier
 	double YAccel = 1; // y accel
 	boolean needToSlowDown = false;		// quick workaround for momentum
@@ -24,10 +26,13 @@ public class GUIMainMenu extends GUI{
 	
 	@Override
 	public void render(double x, double y, double delta){
+		
+		ballPos.update(delta);
+		
 		gl3d();	
 		
 		//glTranslated(0, 0,-10.5);
-		glTranslated(ballPos.getX(),0,ballPos.getY());
+		glTranslated(ballPos.getX(),ballPos.getY(),-10);
 		glRotated(45, 1, 1, 1);
 		
 	    
@@ -76,56 +81,39 @@ public class GUIMainMenu extends GUI{
 		switch(keyID)
 		{
 		case Keyboard.KEY_A:
-			ballPos.setX(ballPos.getX() + 1);
-			System.out.println(XAccel);
+			ballPos.moveX(-1);
 			return 3;
 		case Keyboard.KEY_D:
-			ballPos.setX(ballPos.getX() - 1);
-			System.out.println(XAccel);
+			ballPos.moveX(1);
 			return 3;
 		case Keyboard.KEY_W:
-			ballPos.setY(ballPos.getY() + 1);
-			System.out.println(YAccel);
+			ballPos.moveY(1);
 			return 3;
 		case Keyboard.KEY_S:
-			ballPos.setY(ballPos.getY() - 1);
-			System.out.println(YAccel);
+			ballPos.moveY(-1);
 			return 3;
 		}
 		return 0;
 	}
 	
 	@Override
-	public int keyHeld(int keyID){
-		int i = super.keyHeld(keyID);
-		if (i > 0)
-			return i;
+	public int keyHeld(int keyID, int called)
+	{
 		switch(keyID)
 		{
 		case Keyboard.KEY_A:
-			//ballPos.setX(ballPos.getX() + 1*(XAccel++));	// temporary acceleration
-			ballPos.setX(ballPos.getX() + 1*(XAccel));		// w/o accel
-			System.out.println(XAccel);
-			//needToSlowDown = true;
-			return 3;
+			ballPos.moveX((-1 - called) / 10d);
+			return 1;
 		case Keyboard.KEY_D:
-			//ballPos.setX(ballPos.getX() + 1*(XAccel--));	// temporary acceleration
-			ballPos.setX(ballPos.getX() - 1*(XAccel));		// w/o accel
-			System.out.println(XAccel);
-			//needToSlowDown = true;
-			return 3;
+			ballPos.moveX((1 + called) / 10d);
+			return 1;
 		case Keyboard.KEY_W:
-			//ballPos.setY(ballPos.getY() + 1*(YAccel++));
-			ballPos.setY(ballPos.getY() + 1*(YAccel));		
-			System.out.println(YAccel);
-			return 3;
+			ballPos.moveY(1);
+			return 1;
 		case Keyboard.KEY_S:
-			//ballPos.setY(ballPos.getY() + 1*(YAccel--));
-			ballPos.setY(ballPos.getY() - 1*(YAccel));
-			System.out.println(YAccel);
-			return 3;
+			ballPos.moveY(-1);
+			return 1;
 		}
-		
 		return 0;
 	}
 	

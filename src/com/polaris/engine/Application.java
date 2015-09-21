@@ -137,16 +137,19 @@ public abstract class Application
 			for(Integer i : keyboardPress.keySet())
 			{
 				int j = keyboardPress.get(i);
-				if(--j <= 0)
+				int k = j & 0x0000FFFF;
+				j >>= 16;
+				if(k-- <= 0)
 				{
-					j = gui.keyHeld(i);
-					if(j <= 0)
+					k = gui.keyHeld(i, j);
+					j++;
+					if(k <= 0)
 					{
 						keyboardPress.remove(i);
 						continue;
 					}
 				}
-				keyboardPress.put(i, j);
+				keyboardPress.put(i, (j << 16) | k);
 			}
 			while(Keyboard.next())
 			{

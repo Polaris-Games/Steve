@@ -23,9 +23,9 @@ public abstract class GUI
 		application = app;
 		parent = null;
 	}
-	public GUI(Application app, GUI gui)
+	public GUI(GUI gui)
 	{
-		this(app);
+		this(gui.application);
 		parent = gui;
 	}
 	
@@ -171,11 +171,32 @@ public abstract class GUI
 		return -1;
 	}
 
-	public int keyHeld(int keyID)
+	public int keyHeld(int keyID, int called)
 	{
 		if(currentElement != null)
 		{
 			return currentElement.keyHeld(keyID);
+		}
+		if(keyID == Keyboard.KEY_ESCAPE)
+		{
+			if(shiftDown)
+			{
+				application.setFullscreen(!application.isFullscreen());
+				shiftDown = false;
+			}
+			else
+			{
+				if(getParent() != null)
+				{
+					getParent().reinit();
+					application.setGui(getParent());
+					return 0;
+				}
+				else
+				{
+					application.close();
+				}
+			}
 		}
 		return -1;
 	}

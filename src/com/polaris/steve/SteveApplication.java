@@ -1,7 +1,5 @@
 package com.polaris.steve;
 
-import java.awt.Canvas;
-import javax.swing.JFrame;
 import com.polaris.engine.Application;
 
 public class SteveApplication extends Application{
@@ -26,7 +24,6 @@ public class SteveApplication extends Application{
 
 	@Override
 	protected int getRefreshRate() {
-		
 		return 60;
 	}
 
@@ -44,10 +41,6 @@ public class SteveApplication extends Application{
 	{
 		window.setUndecorated(true);
 		window.setDefault();
-		
-		
-		//setResizable(true);
-		//setVSync(true);
 	}
 	
 }
