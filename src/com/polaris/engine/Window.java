@@ -8,6 +8,8 @@ import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
+import org.lwjgl.opengl.Display;
+
 public class Window extends JFrame
 {
 	
