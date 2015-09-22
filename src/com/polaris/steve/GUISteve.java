@@ -14,7 +14,7 @@ public class GUISteve extends GUI
 	public GUISteve(Application app) 
 	{
 		super(app);
-		theBall = new Steve(0, 0);
+		theBall = new Steve(0, 0, Math.random(), Math.random(), Math.random());
 		camera = new Camera2D();
 		theBackground = new Background(camera);
 	}

@@ -22,6 +22,7 @@ public class GUIMainMenu extends GUISteve
 		gl2d();
 		theBackground.render(delta);
 		theBall.render(delta);
+		
 		drawArc(320, 100, 300, 0, Math.PI, 100, 20);
 	}
 	

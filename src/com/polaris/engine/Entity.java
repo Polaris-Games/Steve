@@ -2,7 +2,7 @@ package com.polaris.engine;
 
 public abstract class Entity
 {
-	private Pos position;
+	protected Pos position;
 	
 	public Entity(Pos pos) 
 	{
