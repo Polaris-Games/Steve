@@ -36,6 +36,7 @@ public class Helper
 	 * @value windows, linux, osx
 	 */
 	public static final String osName;
+	public static final double PI2 = Math.PI * 2;
 
 	static
 	{

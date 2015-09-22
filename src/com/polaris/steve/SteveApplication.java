@@ -1,9 +1,13 @@
 package com.polaris.steve;
 
 import com.polaris.engine.Application;
+import com.polaris.engine.Font;
 
-public class SteveApplication extends Application{
+public class SteveApplication extends Application
+{
 
+	public static Font defaultFont;
+	
 	@Override
 	protected void update() {
 		

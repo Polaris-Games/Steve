@@ -207,7 +207,7 @@ public abstract class Application
 	private void renderLoop()
 	{
 		long currentTime = getTime();
-		double delta = (currentTime - lastTime) / 30f;
+		double delta = (currentTime - lastTime) * getUpdateRate() / (1000d);
 		lastTime = currentTime;
 		render(getMouseX(), getMouseY(), delta);
 		if(fullscreen != Display.isFullscreen())

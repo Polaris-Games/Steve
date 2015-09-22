@@ -18,6 +18,9 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
+import static com.polaris.engine.Helper.*;
+import static java.lang.Math.*;
+
 public class Renderer
 {
 	private static Map<String, Integer> textureList = new HashMap<String, Integer>();
@@ -119,7 +122,7 @@ public class Renderer
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 	}
-	
+
 	public static boolean glBind(int textureId)
 	{
 		if(textureId != currentTexture)
@@ -159,7 +162,7 @@ public class Renderer
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Binds the current OpenGl texture to be the [String:textureName] from the cached and if non existent then it will generate
 	 * the texture under the [BufferedImage:texture]
@@ -202,7 +205,7 @@ public class Renderer
 		}
 		return false;
 	}
-	
+
 	public static boolean glClear(int textureId)
 	{
 		boolean found = false;
@@ -272,7 +275,7 @@ public class Renderer
 
 		glColor3f(1.0f, 1.0f, 1.0f);
 	}
-	
+
 	public static void vertexUV(double x, double y, double u, double v)
 	{
 		glTexCoord2d(u, v);
@@ -284,32 +287,32 @@ public class Renderer
 		glTexCoord2d(u, v);
 		glVertex3d(x, y, z);
 	}
-	
+
 	public static void colorVertex(double x, double y, double r, double g, double b, double a)
 	{
 		glColor4d(r, g, b, a);
 		glVertex2d(x, y);
 	}
-	
+
 	public static void colorVertex(double x, double y, double z, double r, double g, double b, double a)
 	{
 		glColor3d(r, g, b);
 		glVertex3d(x, y, z);
 	}
-	
+
 	public static void colorVertexUV(double x, double y, double u, double v, double r, double g, double b, double a)
 	{
 		glColor4d(r, g, b, a);
 		vertexUV(x, y, u, v);
 	}
-	
+
 	public static void colorVertexUV(double x, double y, double z, double u, double v, double r, double g, double b, double a)
 	{
 		glColor4d(r, g, b, a);
 		vertexUV(x, y, z, u, v);
 	}
-	
-	public static void drawRect(double x, double y, double x1, double y1, double thickness)
+
+	public static void drawRect(double x, double y, double x1, double y1, float thickness)
 	{
 		glVertex2d(x, y1);
 		glVertex2d(x1, y1);
@@ -328,7 +331,7 @@ public class Renderer
 		glVertex2d(x + thickness, y + thickness);
 		glVertex2d(x, y + thickness);
 	}
-	
+
 	public static void drawRect(double x, double y, double x1, double y1)
 	{
 		glVertex2d(x, y1);
@@ -336,12 +339,12 @@ public class Renderer
 		glVertex2d(x1, y);
 		glVertex2d(x, y);
 	}
-	
+
 	public static void glColor(double d, double alpha)
 	{
 		glColor4d(d, d, d, alpha);
 	}
-	
+
 	public static void drawGradientRect(double x, double y, double x1, double y1, double a, double a1, double a2, double a3, double r, double g, double b)
 	{
 		glColor4d(r, g, b, a);
@@ -362,6 +365,59 @@ public class Renderer
 		vertexUV(x, y, u, v);
 	}
 
+	public static void drawArc(double circleX, double circleY, double radius, double startAngle, double endAngle, int lineCount)
+	{
+		drawArc(circleX, circleY, radius, startAngle, endAngle, lineCount, 2f);
+	}
+
+	public static void drawArc(double circleX, double circleY, double radius, double startAngle, double endAngle, int lineCount, float lineWidth)
+	{
+		double theta = (endAngle - startAngle) / (lineCount - 1);
+		double tFactor = tan(theta);//calculate the tangential factor 
+		double rFactor = cos(theta);//calculate the radial factor 
+
+		/*if(abs(endAngle - startAngle) > PI)
+		{
+			if(endAngle > 0)
+			{
+				theta = (PI2 - endAngle + startAngle) / (lineCount - 1);
+				tFactor = -tan(theta);
+				rFactor = cos(theta);
+			}
+			else if(startAngle > 0)
+			{
+				theta = (PI2 + endAngle - startAngle) / (lineCount - 1);
+				tFactor = tan(theta);
+				rFactor = cos(theta);
+			}
+		}
+		else
+		{
+			theta = (endAngle - startAngle) / (lineCount - 1);
+			tFactor = tan(theta);
+			rFactor = cos(theta);
+		}*/
+		
+		double x = radius * cos(startAngle);//start position for the x coord
+		double y = radius * sin(startAngle);//start position for the y coord
+		
+		/*for(int i = 0; i < lineCount; i++)
+		{
+			glVertex2d()
+		}*/
+		
+		for(int ii = 0; ii < lineCount; ii++)
+		{
+			glVertex2d(x + circleX, y + circleY);
+
+			double tx = -y; 
+			double ty = x; 
+
+			x = (x + tx * tFactor) * rFactor; 
+			y = (y + ty * tFactor) * rFactor;
+		}
+	}
+
 	public static double getWidthScale()
 	{
 		return widthProportional;
@@ -371,18 +427,18 @@ public class Renderer
 	{
 		return heightProportional;
 	}
-	
+
 	public static void setMousePosition()
 	{
 		mouseX = Mouse.getX() * widthProportional;
 		mouseY = 720 - (Mouse.getY() * heightProportional);
 	}
-	
+
 	public static double getMouseX()
 	{
 		return mouseX;
 	}
-	
+
 	public static double getMouseY()
 	{
 		return mouseY;
