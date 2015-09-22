@@ -271,6 +271,8 @@ public class Renderer
 		glCullFace(GL_BACK);
 		glEnable(GL_CULL_FACE);
 
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		glColor3f(1.0f, 1.0f, 1.0f);
@@ -372,55 +374,22 @@ public class Renderer
 
 	public static void drawArc(double circleX, double circleY, double radius, double startAngle, double endAngle, int lineCount, double thickness)
 	{
-		double theta = (endAngle - startAngle) / (lineCount - 1);
-		double tFactor = tan(theta);//calculate the tangential factor 
-		double rFactor = cos(theta);//calculate the radial factor 
-
-		/*if(abs(endAngle - startAngle) > PI)
-		{
-			if(endAngle > 0)
-			{
-				theta = (PI2 - endAngle + startAngle) / (lineCount - 1);
-				tFactor = -tan(theta);
-				rFactor = cos(theta);
-			}
-			else if(startAngle > 0)
-			{
-				theta = (PI2 + endAngle - startAngle) / (lineCount - 1);
-				tFactor = tan(theta);
-				rFactor = cos(theta);
-			}
-		}
-		else
-		{
-			theta = (endAngle - startAngle) / (lineCount - 1);
-			tFactor = tan(theta);
-			rFactor = cos(theta);
-		}*/
+		double theta = (endAngle - startAngle) / (lineCount);
 		
-		double x = radius * cos(startAngle);//start position for the x coord
-		double y = radius * sin(startAngle);//start position for the y coord
-		
-		/*glVertex2d(x + circleX - thickness * cos(startAngle), y + circleY - thickness * sin(startAngle));
-		glVertex2d(x + circleX, y + circleY);
-		
-		for(int i = 2; i < lineCount; i++)
-		{
-			glVertex2d(x + circleX, y + circleY);
+		double x = radius * cos(startAngle);
+		double y = radius * sin(startAngle);
 			
-		}*/
-		
-		/*for(int ii = 0; ii < lineCount; ii++)
+		for(int i = 0; i < lineCount; i++)
 		{
 			glColor3d(random(1d), random(1d), random(1d));
-			glVertex2d(x + circleX, y + circleY);
-
-			double tx = -y; 
-			double ty = x; 
-
-			x = (x + tx * tFactor) * rFactor; 
-			y = (y + ty * tFactor) * rFactor;
-		}*/
+			glVertex2d(circleX + x, circleY + y);
+			glVertex2d(circleX + (radius - thickness) * cos(startAngle), circleY + (radius - thickness) * sin(startAngle));
+			startAngle += theta;
+			x = radius * cos(startAngle);
+			y = radius * sin(startAngle);
+			glVertex2d(circleX + (radius - thickness) * cos(startAngle), circleY + (radius - thickness) * sin(startAngle));
+			glVertex2d(circleX + x, circleY + y);
+		}
 	}
 
 	public static double getWidthScale()

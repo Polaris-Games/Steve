@@ -28,7 +28,7 @@ public abstract class GUI
 		this(gui.application);
 		parent = gui;
 	}
-	
+
 	public void init() {}
 
 	public void update(double x, double y)
@@ -144,39 +144,6 @@ public abstract class GUI
 			shiftDown = true;
 			return -1;
 		}
-		if(keyID == -1)
-		{
-			if(keyID == Keyboard.KEY_ESCAPE)
-			{
-				if(shiftDown)
-				{
-					application.setFullscreen(!application.isFullscreen());
-					shiftDown = false;
-				}
-				else
-				{
-					if(getParent() != null)
-					{
-						getParent().reinit();
-						application.setGui(getParent());
-						return 0;
-					}
-					else
-					{
-						application.close();
-					}
-				}
-			}
-		}
-		return -1;
-	}
-
-	public int keyHeld(int keyID, int called)
-	{
-		if(currentElement != null)
-		{
-			return currentElement.keyHeld(keyID);
-		}
 		if(keyID == Keyboard.KEY_ESCAPE)
 		{
 			if(shiftDown)
@@ -197,6 +164,15 @@ public abstract class GUI
 					application.close();
 				}
 			}
+		}
+		return -1;
+	}
+
+	public int keyHeld(int keyID, int called)
+	{
+		if(currentElement != null)
+		{
+			return currentElement.keyHeld(keyID);
 		}
 		return -1;
 	}
@@ -275,9 +251,9 @@ public abstract class GUI
 
 	protected void reinit()
 	{
-		
+
 	}
-	
+
 	public void close() 
 	{
 		this.currentElement = null;
@@ -287,7 +263,7 @@ public abstract class GUI
 	{
 		return currentElement;
 	}
-	
+
 	protected GUI getParent()
 	{
 		return parent;
