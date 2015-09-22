@@ -22,10 +22,7 @@ public class GUIMainMenu extends GUISteve
 		gl2d();
 		theBackground.render(delta);
 		theBall.render(delta);
-		glLineWidth(2);
-		glBegin(GL_LINE_STRIP);
 		drawArc(320, 100, 300, 0, Math.PI, 100, 20);
-		glEnd();
 	}
 	
 	@Override

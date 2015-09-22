@@ -370,7 +370,7 @@ public class Renderer
 		drawArc(circleX, circleY, radius, startAngle, endAngle, lineCount, 2f);
 	}
 
-	public static void drawArc(double circleX, double circleY, double radius, double startAngle, double endAngle, int lineCount, float lineWidth)
+	public static void drawArc(double circleX, double circleY, double radius, double startAngle, double endAngle, int lineCount, double thickness)
 	{
 		double theta = (endAngle - startAngle) / (lineCount - 1);
 		double tFactor = tan(theta);//calculate the tangential factor 
@@ -401,13 +401,18 @@ public class Renderer
 		double x = radius * cos(startAngle);//start position for the x coord
 		double y = radius * sin(startAngle);//start position for the y coord
 		
-		/*for(int i = 0; i < lineCount; i++)
+		/*glVertex2d(x + circleX - thickness * cos(startAngle), y + circleY - thickness * sin(startAngle));
+		glVertex2d(x + circleX, y + circleY);
+		
+		for(int i = 2; i < lineCount; i++)
 		{
-			glVertex2d()
+			glVertex2d(x + circleX, y + circleY);
+			
 		}*/
 		
-		for(int ii = 0; ii < lineCount; ii++)
+		/*for(int ii = 0; ii < lineCount; ii++)
 		{
+			glColor3d(random(1d), random(1d), random(1d));
 			glVertex2d(x + circleX, y + circleY);
 
 			double tx = -y; 
@@ -415,7 +420,7 @@ public class Renderer
 
 			x = (x + tx * tFactor) * rFactor; 
 			y = (y + ty * tFactor) * rFactor;
-		}
+		}*/
 	}
 
 	public static double getWidthScale()
