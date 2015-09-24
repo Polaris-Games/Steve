@@ -457,6 +457,7 @@ public class Renderer
 	{
 		drawArc(circleX, circleY, radius, 0, PI2, lineCount, thickness, endColor);
 	}
+	
 	public static void drawArc(double circleX, double circleY, double radius, double angle0, double angle, int lineCount, double thickness, Color4d endColor)
 	{
 		double deltaTheta = (angle - angle0) / lineCount;
@@ -477,6 +478,67 @@ public class Renderer
 			glVertex2d(circleX + (radius - thickness) * cos(angle0), circleY + (radius - thickness) * sin(angle0));
 			glVertex2d(circleX + x, circleY + y);
 		}
+		glColor(getRed() - rShift * lineCount, getGreen() - gShift * lineCount, getBlue() - bShift * lineCount, getAlpha() - aShift * lineCount);
+	}
+
+	public static void drawCircle(double circleX, double circleY, double radius, int lineCount)
+	{
+		drawCircle(circleX, circleY, radius, lineCount, 0, PI2);
+	}
+
+	public static void drawCircle(double circleX, double circleY, double radius, int lineCount, double angle0, double angle)
+	{
+		double deltaTheta = (angle - angle0) / lineCount;
+
+		GL11.glBegin(GL_TRIANGLE_FAN);
+		// center of circle
+		glVertex2d(circleX, circleY); 
+		for(i = 0; i <= lineCount; i++) 
+		{ 
+			glVertex2d(circleX + (radius * cos((angle -= deltaTheta))), circleY + (radius * sin(angle)));
+		}
+		glEnd();
+	}
+
+	public static void drawCircle(double circleX, double circleY, double radius, int lineCount, Color4d innerColor)
+	{
+		drawCircle(circleX, circleY, radius, lineCount, 0, PI2, innerColor);
+	}
+
+	public static void drawCircle(double circleX, double circleY, double radius, int lineCount, double angle0, double angle, Color4d innerColor)
+	{
+		double deltaTheta = (angle - angle0) / lineCount;
+		Color4d color = new Color4d(getColor());
+		GL11.glBegin(GL_TRIANGLE_FAN);
+		glColor(innerColor);
+		glVertex2d(circleX, circleY);
+		glColor(color);
+		for(int i = 0; i <= lineCount; i++)
+		{
+			glVertex2d(circleX + radius * cos((angle -= deltaTheta)), circleY + radius * sin(angle));
+		}
+		glEnd();
+	}
+
+	public static void drawCircle(double circleX, double circleY, double radius, double u, double v, double u1, double v1, int lineCount)
+	{
+		drawCircle(circleX, circleY, radius, u, v, u1, v1, lineCount, 0, PI2);
+	}
+
+	public static void drawCircle(double circleX, double circleY, double radius, double u, double v, double u1, double v1, int lineCount, double angle0, double angle)
+	{
+		double deltaTheta = (angle - angle0) / lineCount;
+		double difU = (u1 - u) / 2;
+		double difV = (v1 - v) / 2;
+		double centerU = u + difU;
+		double centerV = v + difV;
+		GL11.glBegin(GL_TRIANGLE_FAN);
+		vertexUV(circleX, circleY, centerU, centerV);
+		for(int i = 0; i <= lineCount; i++)
+		{
+			vertexUV(circleX + radius * cos((angle -= deltaTheta)), circleY + radius * sin(angle), centerU + difU * cos(angle), centerV + difV * sin(angle));
+		}
+		glEnd();
 	}
 
 	public static double getWidthScale()
