@@ -1,6 +1,6 @@
 package com.polaris.steve;
 
-import static com.polaris.engine.Renderer.drawImage;
+import static com.polaris.engine.Renderer.drawRect;
 import static com.polaris.engine.Renderer.glBegin;
 import static com.polaris.engine.Renderer.glBind;
 import static org.lwjgl.opengl.GL11.*;
@@ -49,7 +49,7 @@ public class Steve extends Entity
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBind("steve");
 		glBegin();
-		drawImage(position.getX(),position.getY(), position.getX() + WIDTH, position.getY() + HEIGHT,0,0,1,1);
+		drawRect(position.getX(),position.getY(), position.getX() + WIDTH, position.getY() + HEIGHT,0,0,1,1);
 		glEnd();
 	}
 

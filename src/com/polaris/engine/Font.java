@@ -1,7 +1,7 @@
 package com.polaris.engine;
 
 import static com.polaris.engine.Renderer.createTextureId;
-import static com.polaris.engine.Renderer.drawImage;
+import static com.polaris.engine.Renderer.drawRect;
 import static com.polaris.engine.Renderer.glBegin;
 import static com.polaris.engine.Renderer.glBind;
 import static org.lwjgl.opengl.GL11.glEnd;
@@ -243,7 +243,7 @@ public class Font
 
 	protected void drawQuad(double x, double y, double x1, double y1, float u, float v, float u1, float v1) 
 	{
-		drawImage(x, y, x1, y1, u, v, u1, v1);
+		drawRect(x, y, x1, y1, u, v, u1, v1);
 	}
 	
 	protected void draw()

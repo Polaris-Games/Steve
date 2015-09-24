@@ -33,6 +33,7 @@ public class Renderer
 	protected static double heightProportional = 1;
 	protected static double mouseX = 0;
 	protected static double mouseY = 0;
+	private static Color4d currentColor  = new Color4d(1, 1, 1, 1);
 
 	public static int createTextureId(String filename, boolean mipmap)
 	{
@@ -246,7 +247,7 @@ public class Renderer
 
 	public static void glClearBuffers()
 	{
-		GL11.glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		GL11.glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
 	public static void glUpdate(int value)
@@ -272,10 +273,70 @@ public class Renderer
 		glEnable(GL_CULL_FACE);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		
+
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		glColor3f(1.0f, 1.0f, 1.0f);
+	}
+
+	public static void glColor(double r, double g, double b)
+	{
+		glColor4d(r, g, b, 1);
+		currentColor.setColor(r, g, b, 1);
+	}
+	public static void glColor(double r, double g, double b, double a)
+	{
+		glColor4d(r, g, b, a);
+		currentColor.setColor(r, g, b, a);
+	}
+	public static void glColor(Color4d color)
+	{
+		glColor4d(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+		currentColor.setColor(color);
+	}
+	public static Color4d getColor()
+	{
+		return currentColor;
+	}
+	public static double getRed()
+	{
+		return currentColor.getRed();
+	}
+	public static double getGreen()
+	{
+		return currentColor.getGreen();
+	}
+	public static double getBlue()
+	{
+		return currentColor.getBlue();
+	}
+	public static double getAlpha()
+	{
+		return currentColor.getAlpha();
+	}
+
+	public static void colorVertexUV(double x, double y, double z, double u, double v, Color4d color)
+	{
+		glColor(color);
+		vertexUV(x, y, z, u, v);
+	}
+
+	public static void colorVertex(double x, double y, double z, Color4d color)
+	{
+		glColor(color);
+		glVertex3d(x, y, z);
+	}
+
+	public static void colorVertexUV(double x, double y, double u, double v, Color4d color)
+	{
+		glColor(color);
+		vertexUV(x, y, u, v);
+	}
+
+	public static void colorVertex(double x, double y, Color4d color)
+	{
+		glColor(color);
+		glVertex2d(x, y);
 	}
 
 	public static void vertexUV(double x, double y, double u, double v)
@@ -292,46 +353,59 @@ public class Renderer
 
 	public static void colorVertex(double x, double y, double r, double g, double b, double a)
 	{
-		glColor4d(r, g, b, a);
+		glColor(r, g, b, a);
 		glVertex2d(x, y);
 	}
 
 	public static void colorVertex(double x, double y, double z, double r, double g, double b, double a)
 	{
-		glColor3d(r, g, b);
+		glColor(r, g, b);
 		glVertex3d(x, y, z);
 	}
 
 	public static void colorVertexUV(double x, double y, double u, double v, double r, double g, double b, double a)
 	{
-		glColor4d(r, g, b, a);
+		glColor(r, g, b, a);
 		vertexUV(x, y, u, v);
 	}
 
 	public static void colorVertexUV(double x, double y, double z, double u, double v, double r, double g, double b, double a)
 	{
-		glColor4d(r, g, b, a);
+		glColor(r, g, b, a);
 		vertexUV(x, y, z, u, v);
 	}
 
-	public static void drawRect(double x, double y, double x1, double y1, float thickness)
+	public static void drawRect(double x, double y, double x1, double y1, double thickness)
 	{
+		drawRect(x, y1 - thickness, x1, y1);
+		drawRect(x1 - thickness, y, x1, y1 - thickness);
+		drawRect(x, y, x1 - thickness, y + thickness);
+		drawRect(x, y + thickness, x + thickness, y1 - thickness);
+	}
+
+	public static void drawRect(double x, double y, double x1, double y1, double thickness, Color4d innerColor)
+	{
+		Color4d outerColor = new Color4d(getColor());
+
+		glVertex2d(x1, y);
+		glVertex2d(x, y);
+		colorVertex(x + thickness, y + thickness, innerColor);
+		glVertex2d(x1 - thickness, y + thickness);
+
+		glVertex2d(x1 - thickness, y + thickness);
+		glVertex2d(x1 - thickness, y1 - thickness);
+		colorVertex(x1, y1, outerColor);
+		glVertex2d(x1, y);
+
 		glVertex2d(x, y1);
 		glVertex2d(x1, y1);
-		glVertex2d(x1, y1 - thickness);
-		glVertex2d(x, y1 - thickness);
-		glVertex2d(x1 - thickness, y1 - thickness);
-		glVertex2d(x1, y1 - thickness);
-		glVertex2d(x1, y);
-		glVertex2d(x1 - thickness, y);
-		glVertex2d(x, y + thickness);
-		glVertex2d(x1 - thickness, y + thickness);
-		glVertex2d(x1 - thickness, y);
-		glVertex2d(x, y);
-		glVertex2d(x, y1 - thickness);
+		colorVertex(x1 - thickness, y1 - thickness, innerColor);
+		glVertex2d(x + thickness, y1 - thickness);
+
 		glVertex2d(x + thickness, y1 - thickness);
 		glVertex2d(x + thickness, y + thickness);
-		glVertex2d(x, y + thickness);
+		colorVertex(x, y, outerColor);
+		glVertex2d(x, y1);
 	}
 
 	public static void drawRect(double x, double y, double x1, double y1)
@@ -342,24 +416,15 @@ public class Renderer
 		glVertex2d(x, y);
 	}
 
-	public static void glColor(double d, double alpha)
+	public static void drawRect(double x, double y, double x1, double y1, Color4d color0, Color4d color1, Color4d color2, Color4d color3)
 	{
-		glColor4d(d, d, d, alpha);
+		colorVertex(x, y1, color0);
+		colorVertex(x1, y1, color1);
+		colorVertex(x1, y, color2);
+		colorVertex(x, y, color3);
 	}
 
-	public static void drawGradientRect(double x, double y, double x1, double y1, double a, double a1, double a2, double a3, double r, double g, double b)
-	{
-		glColor4d(r, g, b, a);
-		glVertex2d(x, y1);
-		glColor4d(r, g, b, a1);
-		glVertex2d(x1, y1);
-		glColor4d(r, g, b, a2);
-		glVertex2d(x1, y);
-		glColor4d(r, g, b, a3);
-		glVertex2d(x, y);
-	}
-
-	public static void drawImage(double x, double y, double x1, double y1, double u, double v, double u1, double v1)
+	public static void drawRect(double x, double y, double x1, double y1, double u, double v, double u1, double v1)
 	{
 		vertexUV(x, y1, u, v1);
 		vertexUV(x1, y1, u1, v1);
@@ -367,27 +432,49 @@ public class Renderer
 		vertexUV(x, y, u, v);
 	}
 
-	public static void drawArc(double circleX, double circleY, double radius, double startAngle, double endAngle, int lineCount)
+	public static void drawArc(double circleX, double circleY, double radius, int lineCount, double thickness)
 	{
-		drawArc(circleX, circleY, radius, startAngle, endAngle, lineCount, 2f);
+		drawArc(circleX, circleY, radius, 0, PI2, lineCount, thickness);
 	}
 
 	public static void drawArc(double circleX, double circleY, double radius, double startAngle, double endAngle, int lineCount, double thickness)
 	{
 		double theta = (endAngle - startAngle) / (lineCount);
-		
 		double x = radius * cos(startAngle);
 		double y = radius * sin(startAngle);
-			
 		for(int i = 0; i < lineCount; i++)
 		{
-			glColor3d(random(1d), random(1d), random(1d));
 			glVertex2d(circleX + x, circleY + y);
 			glVertex2d(circleX + (radius - thickness) * cos(startAngle), circleY + (radius - thickness) * sin(startAngle));
 			startAngle += theta;
 			x = radius * cos(startAngle);
 			y = radius * sin(startAngle);
 			glVertex2d(circleX + (radius - thickness) * cos(startAngle), circleY + (radius - thickness) * sin(startAngle));
+			glVertex2d(circleX + x, circleY + y);
+		}
+	}
+	public static void drawArc(double circleX, double circleY, double radius, int lineCount, double thickness, Color4d endColor)
+	{
+		drawArc(circleX, circleY, radius, 0, PI2, lineCount, thickness, endColor);
+	}
+	public static void drawArc(double circleX, double circleY, double radius, double angle0, double angle, int lineCount, double thickness, Color4d endColor)
+	{
+		double deltaTheta = (angle - angle0) / lineCount;
+		double x = radius * cos(angle0);
+		double y = radius * sin(angle0);
+		double rShift = (endColor.getRed() - getRed()) / lineCount;
+		double gShift = (endColor.getGreen() - getGreen()) / lineCount;
+		double bShift = (endColor.getBlue() - getBlue()) / lineCount;
+		double aShift = (endColor.getAlpha() - getAlpha()) / lineCount;
+		for(int i = 0; i < lineCount; i++)
+		{
+			glVertex2d(circleX + x, circleY + y);
+			glVertex2d(circleX + (radius - thickness) * cos(angle0), circleY + (radius - thickness) * sin(angle0));
+			angle0 += deltaTheta;
+			x = radius * cos(angle0);
+			y = radius * sin(angle0);
+			glColor(getRed() + rShift, getGreen() + gShift, getBlue() + bShift, getAlpha() + aShift);
+			glVertex2d(circleX + (radius - thickness) * cos(angle0), circleY + (radius - thickness) * sin(angle0));
 			glVertex2d(circleX + x, circleY + y);
 		}
 	}
