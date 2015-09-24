@@ -493,7 +493,7 @@ public class Renderer
 		GL11.glBegin(GL_TRIANGLE_FAN);
 		// center of circle
 		glVertex2d(circleX, circleY); 
-		for(i = 0; i <= lineCount; i++) 
+		for(int i = 0; i <= lineCount; i++) 
 		{ 
 			glVertex2d(circleX + (radius * cos((angle -= deltaTheta))), circleY + (radius * sin(angle)));
 		}
