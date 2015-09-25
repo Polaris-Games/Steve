@@ -1,10 +1,12 @@
 package com.polaris.engine;
 
+import com.polaris.engine.Pos.Pos2DPhysics;
+
 public abstract class Entity
 {
-	protected Pos position;
+	protected Pos2DPhysics position;
 	
-	public Entity(Pos pos) 
+	public Entity(Pos2DPhysics pos) 
 	{
 		position = pos;
 	}

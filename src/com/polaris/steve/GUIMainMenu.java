@@ -43,6 +43,11 @@ public class GUIMainMenu extends GUISteve
 		case KEY_RETURN:
 		case KEY_SPACE:
 			theBall.setActionOnBounce(new ChangeVelocityAction(10, 5));
+			break;
+		case KEY_D:
+		case KEY_RIGHT:
+			
+			break;
 		}
 		return 0;
 	}
