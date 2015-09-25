@@ -491,7 +491,6 @@ public class Renderer
 		double deltaTheta = (angle - angle0) / lineCount;
 
 		GL11.glBegin(GL_TRIANGLE_FAN);
-		// center of circle
 		glVertex2d(circleX, circleY); 
 		for(int i = 0; i <= lineCount; i++) 
 		{ 

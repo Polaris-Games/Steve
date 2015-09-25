@@ -27,17 +27,17 @@ public class SteveApplication extends Application
 	}
 
 	@Override
-	protected int getRefreshRate() {
+	public int getRefreshRate() {
 		return 60;
 	}
 
 	@Override
-	protected int getUpdateRate() {
+	public int getUpdateRate() {
 		return 60;
 	}
 
 	@Override
-	protected String getTitle() {
+	public String getTitle() {
 		return "Steve";		// top kek
 	}
 	
