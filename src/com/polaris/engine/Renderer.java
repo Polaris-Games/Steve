@@ -457,7 +457,6 @@ public class Renderer
 	{
 		drawArc(circleX, circleY, radius, 0, PI2, lineCount, thickness, endColor);
 	}
-	
 	public static void drawArc(double circleX, double circleY, double radius, double angle0, double angle, int lineCount, double thickness, Color4d endColor)
 	{
 		double deltaTheta = (angle - angle0) / lineCount;
@@ -489,8 +488,8 @@ public class Renderer
 	public static void drawCircle(double circleX, double circleY, double radius, int lineCount, double angle0, double angle)
 	{
 		double deltaTheta = (angle - angle0) / lineCount;
-
 		GL11.glBegin(GL_TRIANGLE_FAN);
+		// center of circle
 		glVertex2d(circleX, circleY); 
 		for(int i = 0; i <= lineCount; i++) 
 		{ 

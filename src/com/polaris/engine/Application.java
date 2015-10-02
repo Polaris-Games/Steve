@@ -114,7 +114,7 @@ public abstract class Application
 		renderThread.start();
 	}
 
-	private void startApplication()
+	public void startApplication()
 	{
 		logicThread.start();
 
@@ -209,6 +209,7 @@ public abstract class Application
 		long currentTime = getTime();
 		double delta = (currentTime - lastTime) * getUpdateRate() / (1000d);
 		lastTime = currentTime;
+		render(getMouseX(), getMouseY(), delta);
 		if(fullscreen != Display.isFullscreen())
 		{
 			try 
@@ -224,48 +225,14 @@ public abstract class Application
 		{
 			gui.render(getMouseX(), getMouseY(), delta);
 		}
-		render(getMouseX(), getMouseY(), delta);
 	}
 
-	/**
-	 * After every iteration on the logic loop, this method is called prior to all other update methods.
-	 * If the update is integral to the entire application, put stuff in here. Otherwise go with the GUI
-	 * version of update.
-	 */
 	protected abstract void update();
-	
-	/**
-	 * After every iteration on the render loop, this method is called last compared to all other render methods.
-	 * Useful for overlays that are integral to the application.
-	 * @param mouseX : current mouse position on the x-axis relative to the window and scaled to 1280
-	 * @param mouseY : current mouse position on the y-axis relative to the window and scaled to 720
-	 * @param delta : change in time relative to the logic loop.
-	 */
 	protected abstract void render(double mouseX, double mouseY, double delta);
-	
-	/**
-	 * Initialization of the application, setGUI is vital here
-	 */
 	protected abstract void init();
-	
-	/**
-	 * @return Number of times the game will render per second if possible. -1 for non restrictive
-	 */
-	public abstract int getRefreshRate();
-	
-	/**
-	 * @return Number of times the game will update per second. Recommended to not push limits on updating.
-	 */
-	public abstract int getUpdateRate();
-	
-	/**
-	 * @return Title of the application, non-applicable if undecorated
-	 */
-	public abstract String getTitle();
-	
-	/**
-	 * Apply window effects here
-	 */
+	protected abstract int getRefreshRate();
+	protected abstract int getUpdateRate();
+	protected abstract String getTitle();
 	protected abstract void createWindow();
 
 	private void shutdown()
@@ -277,11 +244,6 @@ public abstract class Application
 		System.exit(1);
 	}
 
-	/**
-	 * Set the applications icons on the task bar and top left corner (if window is decorated)
-	 * @param windowIcon : The top right window icon
-	 * @param barIcon : The task bar icon
-	 */
 	public void setIcons(String windowIcon, String barIcon)
 	{
 		try 
@@ -318,10 +280,6 @@ public abstract class Application
 		return buffer;
 	}
 
-	/**
-	 * Set the current GUI to this new instance, the old gui will call the close method.
-	 * @param newGui : if null, game will close down. If not then init method will be called.
-	 */
 	public void setGui(GUI newGui)
 	{
 		if(newGui == null)
@@ -334,34 +292,19 @@ public abstract class Application
 			gui.close();
 		}
 		newGui.init();
-		if(newGui instanceof LoadingScreen)
-		{
-			((LoadingScreen) newGui).load();
-		}
 		gui = newGui;
 	}
 
-	/**
-	 * Close the game safely
-	 */
 	public void close()
 	{
 		isRunning = false;
 	}
 
-	/**
-	 * Set the screen to fullscreen or not
-	 * @param fullscreen : true for fullscreen, false otherwise
-	 */
 	public void setFullscreen(boolean f)
 	{
 		fullscreen = f;
 	}
 
-	/**
-	 * Is the screen fullscreen
-	 * @return if fullscreen then true, false otherwise
-	 */
 	public boolean isFullscreen()
 	{
 		return Display.isFullscreen();

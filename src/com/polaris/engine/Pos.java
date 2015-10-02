@@ -1,5 +1,8 @@
 package com.polaris.engine;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Pos 
 {
 
@@ -15,8 +18,8 @@ public class Pos
 		posX = prevPosX = interpPosX = x;
 		posY = prevPosY = interpPosY = y;
 	}
-
-	public void update(double delta)
+	
+	public final void update(double delta)
 	{
 		interpPosX = Helper.getLinearValue(interpPosX, posX, Math.abs(posX - prevPosX), delta);
 		interpPosY = Helper.getLinearValue(interpPosY, posY, Math.abs(posY - prevPosY), delta);
@@ -53,6 +56,12 @@ public class Pos
 		prevPosY = interpPosY = posY;
 		posY += y;
 	}
+	
+	public void setPosition(double x, double y)
+	{
+		setX(x);
+		setY(y);
+	}
 
 	public void setX(double x)
 	{
@@ -64,77 +73,94 @@ public class Pos
 		posY = prevPosY = interpPosY = y;
 	}
 
-	public static class Pos2DPhysics extends Pos
+	public static class PosPhysics extends Pos
 	{	
 		private double velX = 0;
 		private double velY = 0;
-		private double prevVelX = 0;
-		private double prevVelY = 0;
-		private double accelX = 0;
-		private double accelY = 0;
-		private double prevAccelX = 0;
-		private double prevAccelY = 0;
+		private double mass = 0;
+		private List<Force> allForces = new ArrayList<Force>();
 
-		public Pos2DPhysics(double x, double y)
+		public PosPhysics(double x, double y, double m)
 		{
 			super(x, y);
+			mass = m;
 		}
 
-		public Pos2DPhysics(double x, double y, double vx, double vy)
+		public PosPhysics(double x, double y, double vx, double vy, double m)
 		{
 			super(x, y);
-			velX = prevVelX = vx;
-			velY = prevVelY = vy;
+			velX = vx;
+			velY = vy;
+			mass = m;
+		}
+		
+		public double getVelocityX()
+		{
+			return velX;
 		}
 
-		public Pos2DPhysics(double x, double y, double vx, double vy, double ax, double ay)
+		public double getVelocityY()
 		{
-			this(x, y);
-			accelX = prevAccelX = ax;
-			accelY = prevAccelY = ay;
+			return velY;
 		}
-	}
-
-	public static class Pos3D extends Pos
-	{
-		private double posZ = 0;
-		private double prevPosZ = 0;
-
-		public Pos3D(double x, double y, double z)
+		
+		public void setVelocity(double x, double y)
 		{
-			super(x, y);
-			posZ = prevPosZ = z;
-		}
-	}
-
-	public static class Pos3DPhysics extends Pos2DPhysics
-	{
-		private double posZ = 0;
-		private double prevPosZ = 0;
-		private double velZ = 0;
-		private double prevVelZ = 0;
-		private double accelZ = 0;
-		private double prevAccelZ = 0;
-
-		public Pos3DPhysics(double x, double y, double z)
-		{
-			super(x, y);
-			posZ = prevPosZ = z;
+			setVelocityX(x);
+			setVelocityY(y);
 		}
 
-		public Pos3DPhysics(double x, double y, double z, double vx, double vy, double vz)
+		public void setVelocityX(double x)
 		{
-			super(x, y, vx, vy);
-			posZ = prevPosZ = z;
-			velZ = prevVelZ = vz;
+			velX = x;
 		}
 
-		public Pos3DPhysics(double x, double y, double z, double vx, double vy, double vz, double ax, double ay, double az)
+		public void setVelocityY(double y)
 		{
-			super(x, y, vx, vy, ax, ay);
-			posZ = prevPosZ = z;
-			velZ = prevVelZ = vz;
-			accelZ = prevAccelZ = az;
+			velY = y;
+		}
+		
+		public void addForce(Force force)
+		{
+			int j = -1;
+			for(int i = 0; i < allForces.size(); i++)
+			{
+				if(allForces.get(i).name.equalsIgnoreCase(force.name))
+				{
+					j = i;
+					break;
+				}
+			}
+			if(j == -1)
+			{
+				allForces.add(force);
+			}
+			else
+			{
+				allForces.get(j).setForce(force);
+			}
+		}
+		
+		public void removeForce(String s)
+		{
+			for(Force force : allForces)
+			{
+				if(force.name.equalsIgnoreCase(s))
+				{
+					allForces.remove(force);
+					break;
+				}
+			}
+		}
+		
+		public double getMass()
+		{
+			return mass;
+		}
+
+		public List<Force> getForces()
+		{
+			return allForces;
 		}
 	}
 
