@@ -21,9 +21,9 @@ import com.polaris.engine.Rectangle;
 
 public class Steve extends Entity
 {
-	private double red = 1;
+	private double red = 1d;
 	private double green = 0d;
-	private double blue = 1;
+	private double blue = 1d;
 	private double bounceVelocityX = 0;
 	private double bounceVelocityY = 20;
 	private double changeVelocityX = 0;
