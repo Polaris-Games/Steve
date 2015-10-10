@@ -48,7 +48,18 @@ public class PhysicsEngine
 			accelY /= position.getMass();
 			newX = position.getX() + position.getVelocityX() + .5 * accelX;
 			newY = position.getY() + position.getVelocityY() + .5 * accelY;
-			Shape shape = e.getEntityBounds().shift(newX, newY);
+			if (newY >= 640-64 )
+			{
+				newY = 640-64;
+				position.setVelocityX(16);
+				position.setVelocityY(-20);
+			}
+			
+			if (newX >= 1280)
+			{
+				newX = -64;
+			}
+			/*Shape shape = e.getEntityBounds().shift(newX, newY);
 			for(Block b : objectList)
 			{
 				if(b.getBounds().inBounds(shape))
@@ -60,7 +71,7 @@ public class PhysicsEngine
 					}
 					b.onEntityCollide(e);
 				}
-			}
+			}*/
 			position.setX(newX);
 			position.setY(newY);
 			position.setVelocityX(position.getVelocityX() + accelX);

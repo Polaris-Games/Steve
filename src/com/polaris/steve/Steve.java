@@ -15,6 +15,7 @@ import static org.lwjgl.opengl.GL11.glEnd;
 
 import com.polaris.engine.Block;
 import com.polaris.engine.Entity;
+import com.polaris.engine.Force;
 import com.polaris.engine.Helper;
 import com.polaris.engine.Pos.PosPhysics;
 import com.polaris.engine.Rectangle;
@@ -70,8 +71,9 @@ public class Steve extends Entity
 
 	public boolean onObjectCollide(Block otherObject)
 	{
-		getPosition().setVelocityY(-20);
-		getPosition().setVelocityX(10);
+		//getPosition().setVelocityY(-20);
+		//getPosition().setVelocityX(10);
+		getPosition().addForce(new Force("steve",20,0));
 		return false;
 	}
 
